@@ -34,6 +34,15 @@ namespace Grocery.App.ViewModels
 
         private void GetAvailableProducts()
         {
+            AvailableProducts.Clear();
+            List<Product> producten = _productService.GetAll();
+            foreach (var product in producten)
+            {
+                if (!MyGroceryListItems.Any(boodschappenProduct => boodschappenProduct.ProductId == product.Id || product.Stock >= 0 ))
+                {
+                    AvailableProducts.Add(product);
+                }
+            }
             //Maak de lijst AvailableProducts leeg
             //Haal de lijst met producten op
             //Controleer of het product al op de boodschappenlijst staat, zo niet zet het in de AvailableProducts lijst
@@ -54,6 +63,14 @@ namespace Grocery.App.ViewModels
         [RelayCommand]
         public void AddProduct(Product product)
         {
+            if (product.Id <= 0) return;
+
+            GroceryListItem newItem = new GroceryListItem(0, groceryList.Id, product.Id, 1);
+            _groceryListItemsService.Add(newItem);
+            product.Stock-- ;
+            _productService.Update(product);
+            GetAvailableProducts();
+            OnGroceryListChanged(GroceryList);
             //Controleer of het product bestaat en dat de Id > 0
             //Maak een GroceryListItem met Id 0 en vul de juiste productid en grocerylistid
             //Voeg het GroceryListItem toe aan de dataset middels de _groceryListItemsService
