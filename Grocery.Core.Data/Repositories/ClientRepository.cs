@@ -1,4 +1,5 @@
-﻿
+﻿using System.generics.collections;
+using System.Linq;
 using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
 
@@ -19,12 +20,12 @@ namespace Grocery.Core.Data.Repositories
 
         public Client? Get(string email)
         {
-            return clientList[0];
+            return clientList.Find(client => client.emailAdress == email);
         }
 
         public Client? Get(int id)
         {
-            return clientList[0];
+            return clientList.Find(client => client.id == id);
         }
 
         public List<Client> GetAll()
