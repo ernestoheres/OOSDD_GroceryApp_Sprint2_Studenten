@@ -7,15 +7,29 @@ namespace Grocery.Core.Services
     public class AuthService : IAuthService
     {
         private readonly IClientService _clientService;
+
         public AuthService(IClientService clientService)
         {
             _clientService = clientService;
         }
+
         public Client? Login(string email, string password)
         {
             //Vraag de klantgegevens [Client] op die je zoekt met het opgegeven emailadres
             //Als je een klant gevonden hebt controleer dan of het password matcht --> PasswordHelper.VerifyPassword(password, passwordFromClient)
             //Als alles klopt dan klantgegveens teruggeven, anders null
+            try
+            {
+                Client user = _clientService.Get(email);
+                if (PasswordHelper.VerifyPassword(password, user._password))
+                {
+                    return user;
+                }
+            }
+            catch
+            {
+                return null;
+            }
             return null;
         }
     }
